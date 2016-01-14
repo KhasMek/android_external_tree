@@ -2,6 +2,8 @@ tree for Android
 
 Source: http://mama.indstate.edu/users/ice/tree/src/tree-1.7.0.tgz
 
+The Android port of tree removed the dependency on langinfo.
+
 This file can be regenerated using:
 
 diff -crB orig src > Android.patch

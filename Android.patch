@@ -1,0 +1,158 @@
+diff -crB orig/tree.c src/tree.c
+*** orig/tree.c	2014-04-23 15:38:24.000000000 -0600
+--- src/tree.c	2016-01-14 08:54:12.810356043 -0700
+***************
+*** 107,113 ****
+    setlocale(LC_COLLATE, "");
+  
+    charset = getcharset();
+!   if (charset == NULL && strcmp(nl_langinfo(CODESET), "UTF-8") == 0) {
+      charset = "UTF-8";
+    }
+  
+--- 107,113 ----
+    setlocale(LC_COLLATE, "");
+  
+    charset = getcharset();
+!   if (charset == NULL) {
+      charset = "UTF-8";
+    }
+  
+***************
+*** 433,439 ****
+      }
+    }
+    if (p) dirname[p] = NULL;
+!   
+    if (outfilename == NULL) {
+  #ifdef __EMX__
+      _fsetmode(outfile=stdout,Hflag?"b":"t");
+--- 433,439 ----
+      }
+    }
+    if (p) dirname[p] = NULL;
+! 
+    if (outfilename == NULL) {
+  #ifdef __EMX__
+      _fsetmode(outfile=stdout,Hflag?"b":"t");
+***************
+*** 705,711 ****
+        st.st_dev = lst.st_dev;
+        st.st_ino = lst.st_ino;
+      }
+!       
+  #ifndef __EMX__
+      if ((lst.st_mode & S_IFMT) != S_IFDIR && !(((lst.st_mode & S_IFMT) == S_IFLNK) && lflag)) {
+        if (pattern && patmatch(ent->d_name,pattern) != 1) continue;
+--- 705,711 ----
+        st.st_dev = lst.st_dev;
+        st.st_ino = lst.st_ino;
+      }
+! 
+  #ifndef __EMX__
+      if ((lst.st_mode & S_IFMT) != S_IFDIR && !(((lst.st_mode & S_IFMT) == S_IFLNK) && lflag)) {
+        if (pattern && patmatch(ent->d_name,pattern) != 1) continue;
+***************
+*** 824,830 ****
+      return NULL;
+    }
+    path = malloc(pathsize=4096);
+!   
+    if (flimit > 0 && n > flimit) {
+      sprintf(path,"%d entries exceeds filelimit, not opening dir",n);
+      *err = scopy(path);
+--- 824,830 ----
+      return NULL;
+    }
+    path = malloc(pathsize=4096);
+! 
+    if (flimit > 0 && n > flimit) {
+      sprintf(path,"%d entries exceeds filelimit, not opening dir",n);
+      *err = scopy(path);
+***************
+*** 833,843 ****
+      return NULL;
+    }
+    if (cmpfunc) qsort(dir,n,sizeof(struct _info *),cmpfunc);
+!   
+    if (lev >= maxdirs-1) {
+      dirs = xrealloc(dirs,sizeof(int) * (maxdirs += 1024));
+    }
+!   
+    while (*dir) {
+      if ((*dir)->isdir && !(xdev && dev != (*dir)->dev)) {
+        if ((*dir)->lnk) {
+--- 833,843 ----
+      return NULL;
+    }
+    if (cmpfunc) qsort(dir,n,sizeof(struct _info *),cmpfunc);
+! 
+    if (lev >= maxdirs-1) {
+      dirs = xrealloc(dirs,sizeof(int) * (maxdirs += 1024));
+    }
+! 
+    while (*dir) {
+      if ((*dir)->isdir && !(xdev && dev != (*dir)->dev)) {
+        if ((*dir)->lnk) {
+***************
+*** 980,986 ****
+  void free_dir(struct _info **d)
+  {
+    int i;
+!   
+    for(i=0;d[i];i++) {
+      free(d[i]->name);
+      if (d[i]->lnk) free(d[i]->lnk);
+--- 980,986 ----
+  void free_dir(struct _info **d)
+  {
+    int i;
+! 
+    for(i=0;d[i];i++) {
+      free(d[i]->name);
+      if (d[i]->lnk) free(d[i]->lnk);
+***************
+*** 993,999 ****
+  {
+    int size = 100;
+    char *buffer = (char *) xmalloc (size);
+!      
+    while (1)
+      {
+        char *value = getcwd (buffer, size);
+--- 993,999 ----
+  {
+    int size = 100;
+    char *buffer = (char *) xmalloc (size);
+! 
+    while (1)
+      {
+        char *value = getcwd (buffer, size);
+***************
+*** 1283,1288 ****
+    if (gflag) n += sprintf(buf+n, " %-8.32s", gidtoname(ent->gid));
+    if (sflag) n += psize(buf+n,ent->size);
+    if (Dflag) n += sprintf(buf+n, " %s", do_date(cflag? ent->ctime : ent->mtime));
+!   
+    return buf;
+  }
+--- 1283,1288 ----
+    if (gflag) n += sprintf(buf+n, " %-8.32s", gidtoname(ent->gid));
+    if (sflag) n += psize(buf+n,ent->size);
+    if (Dflag) n += sprintf(buf+n, " %s", do_date(cflag? ent->ctime : ent->mtime));
+! 
+    return buf;
+  }
+diff -crB orig/tree.h src/tree.h
+*** orig/tree.h	2014-04-21 09:08:30.000000000 -0600
+--- src/tree.h	2016-01-13 21:13:37.541292661 -0700
+***************
+*** 52,58 ****
+  #endif
+  
+  #include <locale.h>
+- #include <langinfo.h>
+  #include <wchar.h>
+  #include <wctype.h>
+  
+--- 52,57 ----
