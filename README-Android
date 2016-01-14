@@ -1,0 +1,11 @@
+tree for Android
+
+Source: http://mama.indstate.edu/users/ice/tree/src/tree-1.7.0.tgz
+
+This file can be regenerated using:
+
+diff -crB orig src > Android.patch
+
+Patch the source with the follow command:
+
+patch -p0 < Android.patch
